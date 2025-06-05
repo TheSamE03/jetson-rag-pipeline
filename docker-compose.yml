@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   frontend:
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
@@ -14,6 +12,7 @@ services:
 
   rag-api:
     build: .
+    runtime: nvidia
     ports:
       - "8000:8000"
     volumes:
@@ -24,27 +23,14 @@ services:
       - MODEL_NAME=llama3.2:3b
     depends_on:
       - ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
 
   ollama:
     image: ollama/ollama:latest
+    runtime: nvidia
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
 
 volumes:
-  ollama_data: 
+  ollama_data:

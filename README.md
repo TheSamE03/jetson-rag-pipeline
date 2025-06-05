@@ -18,9 +18,32 @@ cd jetson-rag-pipeline
 
 2. Place your PDF documents in the `docs` folder.
 
-3. Start the services using Docker Compose:
+3. Start the services using Docker Compose. On Jetson devices the services
+   require the `nvidia` container runtime, which is already configured in
+   `docker-compose.yml`:
 ```bash
 docker compose up -d
+```
+
+### NVIDIA runtime setup (Jetson)
+If you see an "unknown or invalid runtime name: nvidia" error, the NVIDIA
+container runtime may not be registered with Docker. Create or update
+`/etc/docker/daemon.json` as follows and then restart Docker:
+
+```json
+{
+  "default-runtime": "nvidia",
+  "runtimes": {
+    "nvidia": {
+      "path": "nvidia-container-runtime",
+      "runtimeArgs": []
+    }
+  }
+}
+```
+
+```bash
+sudo systemctl restart docker
 ```
 
 4. Pull the LLM model (first time only):
