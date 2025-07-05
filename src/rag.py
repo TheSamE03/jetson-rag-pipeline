@@ -1,9 +1,15 @@
-from llama_index import VectorStoreIndex, SimpleDirectoryReader, ServiceContext
+from llama_index import (
+    VectorStoreIndex,
+    SimpleDirectoryReader,
+    ServiceContext,
+    StorageContext,
+    load_index_from_storage,
+)
 from llama_index.llms import Ollama
-from llama_index.embeddings import HuggingFaceEmbeddings
+from llama_index.embeddings.fastembed import FastEmbedEmbedding
 import os
 from typing import List, Optional
-from . import config
+import config
 
 class ShopManualRAG:
     def __init__(self):
@@ -15,10 +21,8 @@ class ShopManualRAG:
             max_tokens=config.MAX_TOKENS,
         )
         
-        # Initialize embeddings
-        self.embed_model = HuggingFaceEmbeddings(
-            model_name="BAAI/bge-small-en-v1.5"
-        )
+        # Initialize embeddings using fastembed to avoid heavy torch dependency
+        self.embed_model = FastEmbedEmbedding(model_name="BAAI/bge-small-en-v1.5")
         
         # Create service context
         self.service_context = ServiceContext.from_defaults(
